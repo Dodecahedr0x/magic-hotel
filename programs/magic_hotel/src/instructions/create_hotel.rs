@@ -1,4 +1,4 @@
-use crate::{constant::*, state::{Cell, Hotel, Map, Position}};
+use crate::{constant::*, state::{Cell, Hotel, GameMap, Position}};
 use anchor_lang::prelude::*;
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
@@ -24,11 +24,11 @@ pub struct CreateHotel<'info> {
     #[account(
         init,
         payer = payer,
-        space = Map::space(args.map_size as usize),
+        space = GameMap::space(args.map_size as usize),
         seeds = [MAP_PDA_SEED, hotel.key().as_ref(), args.map_id.as_ref()],
         bump,
     )]
-    pub map: Account<'info, Map>,
+    pub map: Account<'info, GameMap>,
     #[account(mut)]
     pub payer: Signer<'info>,
     pub system_program: Program<'info, System>,

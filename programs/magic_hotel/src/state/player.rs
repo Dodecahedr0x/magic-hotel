@@ -4,12 +4,13 @@ use anchor_lang::prelude::*;
 pub struct Player {
     pub bump: u8,
     pub id: Pubkey,
+    pub owner: Pubkey,
     pub hotel: Pubkey,
-    pub position: Position,
+    pub position: Option<Position>,
 }
 
 impl Player {
-    pub const SPACE: usize = 8 + 1 + 32 + 32 + Position::SPACE;
+    pub const SPACE: usize = 8 + 1 + 32 + 32 + 32 + 1 +Position::SPACE;
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug)]

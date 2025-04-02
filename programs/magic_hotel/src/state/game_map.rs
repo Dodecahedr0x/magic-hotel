@@ -3,7 +3,7 @@ use anchor_lang::prelude::*;
 use super::Position;
 
 #[account]
-pub struct Map {
+pub struct GameMap {
     pub bump: u8,
     pub hotel: Pubkey,
     pub id: Pubkey,
@@ -11,7 +11,7 @@ pub struct Map {
     pub connections: Vec<(Position, Position)>,
 }
 
-impl Map {
+impl GameMap {
     pub fn space(size: usize) -> usize { 8 + 1 + 32 + 32 + size * size * Cell::SPACE + 2 *size * size * Position::SPACE }
 }
 

@@ -1,6 +1,6 @@
 use crate::{
     constant::*,
-    state::{Cell, Hotel, Map},
+    state::{Cell, Hotel, GameMap},
 };
 use anchor_lang::prelude::*;
 
@@ -23,11 +23,11 @@ pub struct CreateMap<'info> {
     #[account(
         init,
         payer = payer,
-        space = Map::space(hotel.map_size as usize),
+        space = GameMap::space(hotel.map_size as usize),
         seeds = [MAP_PDA_SEED, hotel.key().as_ref(), args.id.as_ref()],
         bump,
     )]
-    pub map: Account<'info, Map>,
+    pub map: Account<'info, GameMap>,
     pub system_program: Program<'info, System>,
 }
 

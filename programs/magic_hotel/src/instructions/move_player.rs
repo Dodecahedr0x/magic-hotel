@@ -1,7 +1,7 @@
 use crate::{
     constant::*,
     errors::HotelError,
-    state::{Hotel, Map, Player},
+    state::{GameMap, Hotel, Player, Position},
 };
 use anchor_lang::prelude::*;
 
@@ -24,14 +24,16 @@ pub struct MovePlayer<'info> {
         bump = map.bump,
         has_one = hotel,
     )]
-    pub map: Account<'info, Map>,
+    pub map: Account<'info, GameMap>,
     #[account(
         mut,
         seeds = [PLAYER_PDA_SEED, player.hotel.as_ref(), player.id.as_ref()],
         bump = player.bump,
         has_one = hotel,
+        has_one = owner,
     )]
     pub player: Account<'info, Player>,
+    pub owner: Signer<'info>,
 }
 
 impl<'info> MovePlayer<'info> {
@@ -40,18 +42,25 @@ impl<'info> MovePlayer<'info> {
             player,
             map,
             hotel,
+            owner,
         } = ctx.accounts;
 
-        if !player.position.map.eq(&map.key()) {
+        let Some(position) = &player.position else {
+            return err!(HotelError::InvalidMap);
+        };
+        if !position.map.eq(&map.key()) {
             return err!(HotelError::InvalidMap);
         }
-        if !player.position.is_adjacent(args.destination_index, hotel.map_size) {
+        if !position.is_adjacent(args.destination_index, hotel.map_size) {
             return err!(HotelError::InvalidDestination);
         }
+        if player.owner != owner.key() {
+            return err!(HotelError::InvalidOwner);
+        }
 
-        map.cells[player.position.cell_index as usize].occupant = None;
+        map.cells[position.cell_index as usize].occupant = None;
         map.cells[args.destination_index as usize].occupant = Some(player.id);
-        player.position.cell_index = args.destination_index;
+        player.position = Some(Position { map: map.key(), cell_index: args.destination_index });
 
         Ok(())
     }

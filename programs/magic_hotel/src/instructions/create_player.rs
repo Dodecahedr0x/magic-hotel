@@ -1,5 +1,5 @@
 use crate::{
-    constant::*, errors::HotelError, state::{Hotel, Map, Player}
+    constant::*, errors::HotelError, state::{Hotel, GameMap, Player}
 };
 use anchor_lang::prelude::*;
 
@@ -17,12 +17,6 @@ pub struct CreatePlayer<'info> {
     )]
     pub hotel: Account<'info, Hotel>,
     #[account(
-        seeds = [MAP_PDA_SEED, hotel.key().as_ref(), genesis_map.id.as_ref()],
-        bump,
-        constraint = genesis_map.key() == hotel.genesis.map,
-    )]
-    pub genesis_map: Account<'info, Map>,
-    #[account(
         init,
         payer = user,
         space = Player::SPACE,
@@ -37,16 +31,12 @@ pub struct CreatePlayer<'info> {
 
 impl<'info> CreatePlayer<'info> {
     pub fn handler(ctx: Context<Self>, args: CreatePlayerArgs) -> Result<()> {
-        let CreatePlayer {player, hotel, genesis_map, ..} = ctx.accounts;
-
-        if genesis_map.cells[hotel.genesis.cell_index as usize].occupant != None {
-            return err!(HotelError::CrowdedDestination);
-        }
+        let CreatePlayer {player, hotel, user, ..} = ctx.accounts;
         
         player.bump = ctx.bumps.player;
         player.id = args.player_id;
+        player.owner = user.key();
         player.hotel = hotel.key();
-        player.position = hotel.genesis.clone();
 
         Ok(())
     }

@@ -10,4 +10,8 @@ pub enum HotelError {
     CrowdedDestination,
     #[msg("Player not at source")]
     PlayerNotAtSource,
+    #[msg("Invalid owner")]
+    InvalidOwner,
+    #[msg("Player already in hotel")]
+    PlayerAlreadyInHotel,
 }

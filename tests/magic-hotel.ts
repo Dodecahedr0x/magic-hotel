@@ -81,10 +81,19 @@ describe("ephemeral-orderbook", () => {
       })
       .accountsPartial({
         hotel: hotelPda,
-        genesisMap: map1Pda,
         player: playerPda,
         user: provider.wallet.publicKey,
         systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .rpc();
+
+    await program.methods
+      .enterHotel()
+      .accountsPartial({
+        hotel: hotelPda,
+        map: map1Pda,
+        player: playerPda,
+        user: provider.wallet.publicKey,
       })
       .rpc();
 
@@ -126,6 +135,7 @@ describe("ephemeral-orderbook", () => {
       .rpc();
 
     let playerAccount = await program.account.player.fetch(playerPda);
+    console.log(playerAccount);
     assert.equal(playerAccount.position.map.toString(), map1Pda.toString());
     assert.equal(playerAccount.position.cellIndex.toString(), "1");
 

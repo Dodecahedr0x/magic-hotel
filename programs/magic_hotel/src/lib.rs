@@ -56,6 +56,10 @@ pub mod magic_hotel {
 
     /* Update players */
 
+    pub fn enter_hotel(ctx: Context<EnterHotel>) -> Result<()> {
+        EnterHotel::handler(ctx)
+    }
+
     pub fn move_player(ctx: Context<MovePlayer>, args: MovePlayerArgs) -> Result<()> {
         MovePlayer::handler(ctx, args)
     }
