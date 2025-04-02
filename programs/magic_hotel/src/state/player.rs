@@ -11,41 +11,40 @@ pub struct Player {
 
 impl Player {
     pub const SPACE: usize = 8 + 1 + 32 + 32 + 32 + 1 + Position::SPACE;
-    pub fn space(size: usize) -> usize { 8 + 1 + 32 + 32 + size * size * (2 * Position::SPACE) }
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug)]
 pub struct Position {
-    pub map: Pubkey,
+    pub room: Pubkey,
     pub cell_index: u16,
 }
 
 impl PartialEq for Position {
     fn eq(&self, other: &Self) -> bool {
-        self.map.eq(&other.map) && self.cell_index == other.cell_index
+        self.room.eq(&other.room) && self.cell_index == other.cell_index
     }
 }
 
 impl Position {
     pub const SPACE: usize = 32 + 2;
 
-    /// Check if the position is adjacent to the given index on the map.
+    /// Check if the position is adjacent to the given index on the room.
     /// 
     /// The position is adjacent to the given index if the difference between the x and y coordinates is 1.
     /// # Arguments
     /// 
-    /// * `index` - The index of the cell on the map
-    /// * `map_size` - The size of the map
+    /// * `index` - The index of the cell on the room
+    /// * `room_size` - The size of the room
     /// 
     /// # Returns 
     /// 
     /// * `true` - If the position is adjacent to the given index
     /// * `false` - If the position is not adjacent to the given index
-    pub fn is_adjacent(&self, index: u16, map_size: u16) -> bool {
-        let x_diff = self.cell_index % map_size;
-        let y_diff = self.cell_index / map_size;
-        let other_x_diff = index % map_size;
-        let other_y_diff = index / map_size;
+    pub fn is_adjacent(&self, index: u16, room_size: u16) -> bool {
+        let x_diff = self.cell_index % room_size;
+        let y_diff = self.cell_index / room_size;
+        let other_x_diff = index % room_size;
+        let other_y_diff = index / room_size;
         (x_diff.abs_diff(other_x_diff) + y_diff.abs_diff(other_y_diff)) == 1
     }
 }

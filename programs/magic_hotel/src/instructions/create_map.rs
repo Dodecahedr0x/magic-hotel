@@ -23,23 +23,23 @@ pub struct CreateMap<'info> {
     #[account(
         init,
         payer = payer,
-        space = Room::space(hotel.map_size as usize),
-        seeds = [MAP_PDA_SEED, hotel.key().as_ref(), args.id.as_ref()],
+        space = Room::space(hotel.room_size as usize),
+        seeds = [ROOM_PDA_SEED, hotel.key().as_ref(), args.id.as_ref()],
         bump,
     )]
-    pub map: Account<'info, Room>,
+    pub room: Account<'info, Room>,
     pub system_program: Program<'info, System>,
 }
 
 impl<'info> CreateMap<'info> {
     pub fn handler(ctx: Context<Self>, args: CreateMapArgs) -> Result<()> {
-        let CreateMap { hotel, map, .. } = ctx.accounts;
+        let CreateMap { hotel, room, .. } = ctx.accounts;
 
-        map.bump = ctx.bumps.map;
-        map.hotel = hotel.key();
-        map.id = args.id;
-        map.cells = args.cells.into_iter().map(|tile| Cell { tile, occupant: None }).collect();
-        map.connections = vec![];
+        room.bump = ctx.bumps.room;
+        room.hotel = hotel.key();
+        room.id = args.id;
+        room.cells = args.cells.into_iter().map(|tile| Cell { tile, occupant: None }).collect();
+        room.connections = vec![];
 
         Ok(())
     }

@@ -20,18 +20,18 @@ pub struct UseConnection<'info> {
     pub hotel: Account<'info, Hotel>,
     #[account(
         mut,
-        seeds = [MAP_PDA_SEED, source_map.hotel.as_ref(), source_map.id.as_ref()],
-        bump = source_map.bump,
+        seeds = [ROOM_PDA_SEED, source_room.hotel.as_ref(), source_room.id.as_ref()],
+        bump = source_room.bump,
         has_one = hotel,
     )]
-    pub source_map: Account<'info, Room>,
+    pub source_room: Account<'info, Room>,
     #[account(
         mut,
-        seeds = [MAP_PDA_SEED, destination_map.hotel.as_ref(), destination_map.id.as_ref()],
-        bump = destination_map.bump,
+        seeds = [ROOM_PDA_SEED, destination_room.hotel.as_ref(), destination_room.id.as_ref()],
+        bump = destination_room.bump,
         has_one = hotel,
     )]
-    pub destination_map: Account<'info, Room>,
+    pub destination_room: Account<'info, Room>,
     #[account(
         mut,
         seeds = [PLAYER_PDA_SEED, player.hotel.as_ref(), player.id.as_ref()],
@@ -47,33 +47,33 @@ impl<'info> UseConnection<'info> {
     pub fn handler(ctx: Context<Self>, args: UseConnectionArgs) -> Result<()> {
         let UseConnection {
             player,
-            source_map,
-            destination_map,
+            source_room,
+            destination_room,
             owner,
             ..
         } = ctx.accounts;
-        let (source_position, destination_position) = source_map.connections[args.connection_index as usize].clone().tuple();
+        let (source_position, destination_position) = source_room.connections[args.connection_index as usize].clone().tuple();
 
         let Some(position) = &player.position else {
-            return err!(HotelError::InvalidMap);
+            return err!(HotelError::InvalidRoom);
         };
-        if !position.map.eq(&source_map.key()) {
-            return err!(HotelError::InvalidMap);
+        if !position.room.eq(&source_room.key()) {
+            return err!(HotelError::InvalidRoom);
         }
         if position.cell_index != source_position.cell_index {
             return err!(HotelError::PlayerNotAtSource);
         }
-        if destination_map.cells[destination_position.cell_index as usize].occupant.is_some() {
+        if destination_room.cells[destination_position.cell_index as usize].occupant.is_some() {
             return err!(HotelError::CrowdedDestination);
         }
         if player.owner != owner.key() {
             return err!(HotelError::InvalidOwner);
         }
 
-        source_map.cells[position.cell_index as usize].occupant = None;
-        destination_map.cells[destination_position.cell_index as usize].occupant = Some(player.id);
+        source_room.cells[position.cell_index as usize].occupant = None;
+        destination_room.cells[destination_position.cell_index as usize].occupant = Some(player.id);
         player.position = Some(Position {
-            map: destination_map.key(),
+            room: destination_room.key(),
             cell_index: destination_position.cell_index,
         });
 

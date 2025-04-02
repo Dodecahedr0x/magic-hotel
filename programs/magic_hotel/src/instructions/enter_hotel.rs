@@ -8,16 +8,16 @@ pub struct EnterHotel<'info> {
     #[account(
         seeds = [HOTEL_PDA_SEED, hotel.id.as_ref()],
         bump = hotel.bump,
-        constraint = hotel.genesis.map.eq(&map.key()),
+        constraint = hotel.genesis.room.eq(&room.key()),
     )]
     pub hotel: Account<'info, Hotel>,
     #[account(
         mut,
-        seeds = [MAP_PDA_SEED, hotel.key().as_ref(), map.id.as_ref()],
-        bump = map.bump,
+        seeds = [ROOM_PDA_SEED, hotel.key().as_ref(), room.id.as_ref()],
+        bump = room.bump,
         has_one = hotel,
     )]
-    pub map: Account<'info, Room>,
+    pub room: Account<'info, Room>,
     #[account(
         mut,
         seeds = [PLAYER_PDA_SEED, hotel.key().as_ref(), player.id.as_ref()],
@@ -30,7 +30,7 @@ pub struct EnterHotel<'info> {
 
 impl<'info> EnterHotel<'info> {
     pub fn handler(ctx: Context<Self>) -> Result<()> {
-        let EnterHotel {player, hotel, map, user} = ctx.accounts;
+        let EnterHotel {player, hotel, room, user} = ctx.accounts;
         
         if player.owner != user.key() {
             return err!(HotelError::InvalidOwner);
@@ -38,7 +38,7 @@ impl<'info> EnterHotel<'info> {
         if player.position.is_some() {
             return err!(HotelError::PlayerAlreadyInHotel);
         }
-        map.cells[hotel.genesis.cell_index as usize].occupant = Some(player.id);
+        room.cells[hotel.genesis.cell_index as usize].occupant = Some(player.id);
         player.position = Some(hotel.genesis.clone());
 
         Ok(())

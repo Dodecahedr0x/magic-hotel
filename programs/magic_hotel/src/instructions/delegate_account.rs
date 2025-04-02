@@ -1,12 +1,12 @@
 use anchor_lang::prelude::*;
 use ephemeral_rollups_sdk::{anchor::delegate, cpi::DelegateConfig};
 
-use crate::constant::{MAP_PDA_SEED, PLAYER_PDA_SEED};
+use crate::constant::{ROOM_PDA_SEED, PLAYER_PDA_SEED};
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
-pub struct DelegateMapArgs {
+pub struct DelegateRoomArgs {
     pub hotel: Pubkey,
-    pub map_id: Pubkey,
+    pub room_id: Pubkey,
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
@@ -25,13 +25,13 @@ pub struct DelegateAccount<'info> {
 }
 
 impl<'info> DelegateAccount<'info> {
-    pub fn map_handler(ctx: Context<Self>, args: DelegateMapArgs) -> Result<()> {
+    pub fn room_handler(ctx: Context<Self>, args: DelegateRoomArgs) -> Result<()> {
         ctx.accounts.delegate_pda(
             &ctx.accounts.payer,
             &[
-                MAP_PDA_SEED,
+                ROOM_PDA_SEED,
                 args.hotel.as_ref(),
-                args.map_id.as_ref(),
+                args.room_id.as_ref(),
             ],
             DelegateConfig::default(),
         )?;

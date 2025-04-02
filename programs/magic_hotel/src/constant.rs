@@ -4,7 +4,7 @@ use anchor_lang::prelude::*;
 pub const HOTEL_PDA_SEED: &[u8] = b"hotel:";
 
 #[constant]
-pub const MAP_PDA_SEED: &[u8] = b"map:";
+pub const ROOM_PDA_SEED: &[u8] = b"room:";
 
 #[constant]
 pub const PLAYER_PDA_SEED: &[u8] = b"player:";

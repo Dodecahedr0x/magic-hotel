@@ -38,16 +38,16 @@ pub mod magic_hotel {
 
     /* Delegate and undelegate accounts */
 
-    pub fn delegate_map(ctx: Context<DelegateAccount>, args: DelegateMapArgs) -> Result<()> {
-        DelegateAccount::map_handler(ctx, args)
+    pub fn delegate_room(ctx: Context<DelegateAccount>, args: DelegateRoomArgs) -> Result<()> {
+        DelegateAccount::room_handler(ctx, args)
     }
 
     pub fn delegate_player(ctx: Context<DelegateAccount>, args: DelegatePlayerArgs) -> Result<()> {
         DelegateAccount::player_handler(ctx, args)
     }
 
-    pub fn undelegate_map(ctx: Context<UndelegateAccount>) -> Result<()> {
-        UndelegateAccount::map_handler(ctx)
+    pub fn undelegate_room(ctx: Context<UndelegateAccount>) -> Result<()> {
+        UndelegateAccount::room_handler(ctx)
     }
 
     pub fn undelegate_player(ctx: Context<UndelegateAccount>) -> Result<()> {

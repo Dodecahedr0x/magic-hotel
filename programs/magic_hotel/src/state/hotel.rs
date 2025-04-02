@@ -6,7 +6,7 @@ use super::Position;
 pub struct Hotel {
     pub bump: u8,
     pub id: Pubkey,
-    pub map_size: u16,
+    pub room_size: u16,
     pub genesis: Position,
 }
 

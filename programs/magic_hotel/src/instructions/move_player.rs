@@ -20,11 +20,11 @@ pub struct MovePlayer<'info> {
     pub hotel: Account<'info, Hotel>,
     #[account(
         mut,
-        seeds = [MAP_PDA_SEED, map.hotel.as_ref(), map.id.as_ref()],
-        bump = map.bump,
+        seeds = [ROOM_PDA_SEED, room.hotel.as_ref(), room.id.as_ref()],
+        bump = room.bump,
         has_one = hotel,
     )]
-    pub map: Account<'info, Room>,
+    pub room: Account<'info, Room>,
     #[account(
         mut,
         seeds = [PLAYER_PDA_SEED, player.hotel.as_ref(), player.id.as_ref()],
@@ -40,27 +40,27 @@ impl<'info> MovePlayer<'info> {
     pub fn handler(ctx: Context<Self>, args: MovePlayerArgs) -> Result<()> {
         let MovePlayer {
             player,
-            map,
+            room    ,
             hotel,
             owner,
         } = ctx.accounts;
 
         let Some(position) = &player.position else {
-            return err!(HotelError::InvalidMap);
+            return err!(HotelError::InvalidRoom);
         };
-        if !position.map.eq(&map.key()) {
-            return err!(HotelError::InvalidMap);
+        if !position.room.eq(&room.key()) {
+            return err!(HotelError::InvalidRoom);
         }
-        if !position.is_adjacent(args.destination_index, hotel.map_size) {
+        if !position.is_adjacent(args.destination_index, hotel.room_size) {
             return err!(HotelError::InvalidDestination);
         }
         if player.owner != owner.key() {
             return err!(HotelError::InvalidOwner);
         }
 
-        map.cells[position.cell_index as usize].occupant = None;
-        map.cells[args.destination_index as usize].occupant = Some(player.id);
-        player.position = Some(Position { map: map.key(), cell_index: args.destination_index });
+        room.cells[position.cell_index as usize].occupant = None;
+        room.cells[args.destination_index as usize].occupant = Some(player.id);
+        player.position = Some(Position { room: room.key(), cell_index: args.destination_index });
 
         Ok(())
     }

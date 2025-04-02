@@ -20,26 +20,26 @@ pub struct CreateConnection<'info> {
     pub hotel: Account<'info, Hotel>,
     #[account(
         mut,
-        seeds = [MAP_PDA_SEED, hotel.key().as_ref(), source_map.id.as_ref()],
+        seeds = [ROOM_PDA_SEED, hotel.key().as_ref(), source_room.id.as_ref()],
         bump,
     )]
-    pub source_map: Account<'info, Room>,
+    pub source_room: Account<'info, Room>,
     #[account(
-        seeds = [MAP_PDA_SEED, hotel.key().as_ref(), destination_map.id.as_ref()],
+        seeds = [ROOM_PDA_SEED, hotel.key().as_ref(), destination_room.id.as_ref()],
         bump,
     )]
-    pub destination_map: Account<'info, Room>,
+    pub destination_room: Account<'info, Room>,
 }
 
 impl<'info> CreateConnection<'info> {
     pub fn handler(ctx: Context<Self>, args: CreateConnectionArgs) -> Result<()> {
-        let CreateConnection { source_map, destination_map, .. } = ctx.accounts;
+        let CreateConnection { source_room, destination_room, .. } = ctx.accounts;
 
         // TODO: Check if the connection is valid
-        let source_pk = source_map.key();
-        source_map.connections.push(Connection {
-            source: Position { map: source_pk, cell_index: args.origin_cell_index },
-            destination: Position { map: destination_map.key(), cell_index: args.destination_cell_index },
+        let source_pk = source_room.key();
+        source_room.connections.push(Connection {
+            source: Position { room: source_pk, cell_index: args.origin_cell_index },
+            destination: Position { room: destination_room.key(), cell_index: args.destination_cell_index },
         });
 
         Ok(())

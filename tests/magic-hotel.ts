@@ -7,7 +7,7 @@ import { assert } from "chai";
 dotenv.config();
 
 const HOTEL_PDA_SEED = "hotel:";
-const MAP_PDA_SEED = "map:";
+const ROOM_PDA_SEED = "room:";
 const PLAYER_PDA_SEED = "player:";
 
 describe("ephemeral-orderbook", () => {
@@ -27,19 +27,19 @@ describe("ephemeral-orderbook", () => {
   const program = anchor.workspace.MagicHotel as Program<MagicHotel>;
   const ephemeralProgram = new Program(program.idl, providerEphemeralRollup);
   const hotelId = anchor.web3.Keypair.generate().publicKey;
-  const map1Id = anchor.web3.Keypair.generate().publicKey;
-  const map2Id = anchor.web3.Keypair.generate().publicKey;
+  const room1Id = anchor.web3.Keypair.generate().publicKey;
+  const room2Id = anchor.web3.Keypair.generate().publicKey;
   const playerId = anchor.web3.Keypair.generate().publicKey;
   const [hotelPda] = anchor.web3.PublicKey.findProgramAddressSync(
     [Buffer.from(HOTEL_PDA_SEED), hotelId.toBuffer()],
     program.programId
   );
-  const [map1Pda] = anchor.web3.PublicKey.findProgramAddressSync(
-    [Buffer.from(MAP_PDA_SEED), hotelPda.toBuffer(), map1Id.toBuffer()],
+  const [room1Pda] = anchor.web3.PublicKey.findProgramAddressSync(
+    [Buffer.from(ROOM_PDA_SEED), hotelPda.toBuffer(), room1Id.toBuffer()],
     program.programId
   );
-  const [map2Pda] = anchor.web3.PublicKey.findProgramAddressSync(
-    [Buffer.from(MAP_PDA_SEED), hotelPda.toBuffer(), map2Id.toBuffer()],
+  const [room2Pda] = anchor.web3.PublicKey.findProgramAddressSync(
+    [Buffer.from(ROOM_PDA_SEED), hotelPda.toBuffer(), room2Id.toBuffer()],
     program.programId
   );
   const [playerPda] = anchor.web3.PublicKey.findProgramAddressSync(
@@ -52,25 +52,25 @@ describe("ephemeral-orderbook", () => {
     await program.methods
       .createHotel({
         hotelId,
-        mapId: map1Id,
-        mapSize,
-        genesisMap: Buffer.from(Array(mapSize * mapSize).fill(1)),
+        roomId: room1Id,
+        roomSize: mapSize,
+        genesisRoom: Buffer.from(Array(mapSize * mapSize).fill(1)),
         genesisPosition: 0,
       })
       .accountsPartial({
         hotel: hotelPda,
-        map: map1Pda,
+        room: room1Pda,
       })
       .rpc();
 
     await program.methods
       .createMap({
-        id: map2Id,
+        id: room2Id,
         cells: Buffer.from(Array(mapSize * mapSize).fill(1)),
       })
       .accountsPartial({
         hotel: hotelPda,
-        map: map2Pda,
+        room: room2Pda,
         systemProgram: anchor.web3.SystemProgram.programId,
       })
       .rpc();
@@ -91,7 +91,7 @@ describe("ephemeral-orderbook", () => {
       .enterHotel()
       .accountsPartial({
         hotel: hotelPda,
-        map: map1Pda,
+        room: room1Pda,
         player: playerPda,
         user: provider.wallet.publicKey,
       })
@@ -104,8 +104,8 @@ describe("ephemeral-orderbook", () => {
       })
       .accountsPartial({
         hotel: hotelPda,
-        sourceMap: map1Pda,
-        destinationMap: map2Pda,
+        sourceRoom: room1Pda,
+        destinationRoom: room2Pda,
       })
       .rpc();
 
@@ -116,8 +116,8 @@ describe("ephemeral-orderbook", () => {
       })
       .accountsPartial({
         hotel: hotelPda,
-        sourceMap: map2Pda,
-        destinationMap: map1Pda,
+        sourceRoom: room2Pda,
+        destinationRoom: room1Pda,
       })
       .rpc();
   });
@@ -130,12 +130,12 @@ describe("ephemeral-orderbook", () => {
       .accountsPartial({
         player: playerPda,
         hotel: hotelPda,
-        map: map1Pda,
+        room: room1Pda,
       })
       .rpc();
 
     let playerAccount = await program.account.player.fetch(playerPda);
-    assert.equal(playerAccount.position.map.toString(), map1Pda.toString());
+    assert.equal(playerAccount.position.room.toString(), room1Pda.toString());
     assert.equal(playerAccount.position.cellIndex.toString(), "1");
 
     await program.methods
@@ -145,30 +145,30 @@ describe("ephemeral-orderbook", () => {
       .accountsPartial({
         player: playerPda,
         hotel: hotelPda,
-        sourceMap: map1Pda,
-        destinationMap: map2Pda,
+        sourceRoom: room1Pda,
+        destinationRoom: room2Pda,
       })
       .rpc();
 
     playerAccount = await program.account.player.fetch(playerPda);
-    assert.equal(playerAccount.position.map.toString(), map2Pda.toString());
+    assert.equal(playerAccount.position.room.toString(), room2Pda.toString());
     assert.equal(playerAccount.position.cellIndex.toString(), "0");
   });
 
   it("Delegate accounts", async () => {
     let txs = [
       await program.methods
-        .delegateMap({ mapId: map1Id, hotel: hotelPda })
+        .delegateRoom({ roomId: room1Id, hotel: hotelPda })
         .accountsPartial({
           payer: provider.wallet.publicKey,
-          pda: map1Pda,
+          pda: room1Pda,
         })
         .transaction(),
       await program.methods
-        .delegateMap({ mapId: map2Id, hotel: hotelPda })
+        .delegateRoom({ roomId: room2Id, hotel: hotelPda })
         .accountsPartial({
           payer: provider.wallet.publicKey,
-          pda: map2Pda,
+          pda: room2Pda,
         })
         .transaction(),
       await program.methods
@@ -192,14 +192,14 @@ describe("ephemeral-orderbook", () => {
       });
     }
 
-    const map1Account = await provider.connection.getAccountInfo(map1Pda);
+    const room1Account = await provider.connection.getAccountInfo(room1Pda);
     assert.equal(
-      map1Account.owner.toBase58(),
+      room1Account.owner.toBase58(),
       DELEGATION_PROGRAM_ID.toBase58()
     );
-    const map2Account = await provider.connection.getAccountInfo(map2Pda);
+    const room2Account = await provider.connection.getAccountInfo(room2Pda);
     assert.equal(
-      map2Account.owner.toBase58(),
+      room2Account.owner.toBase58(),
       DELEGATION_PROGRAM_ID.toBase58()
     );
     const playerAccount = await provider.connection.getAccountInfo(playerPda);
@@ -217,7 +217,7 @@ describe("ephemeral-orderbook", () => {
       .accountsPartial({
         player: playerPda,
         hotel: hotelPda,
-        map: map2Pda,
+        room: room2Pda,
       })
       .transaction();
     tx.feePayer = providerEphemeralRollup.wallet.publicKey;
@@ -233,7 +233,7 @@ describe("ephemeral-orderbook", () => {
     const playerAccount = await ephemeralProgram.account.player.fetch(
       playerPda
     );
-    assert.equal(playerAccount.position.map.toString(), map2Pda.toString());
+    assert.equal(playerAccount.position.room.toString(), room2Pda.toString());
     assert.equal(playerAccount.position.cellIndex.toString(), "1");
   });
 });

@@ -4,9 +4,9 @@ use anchor_lang::prelude::*;
 #[derive(AnchorSerialize, AnchorDeserialize)]
 pub struct CreateHotelArgs {
     pub hotel_id: Pubkey,
-    pub map_id: Pubkey,
-    pub map_size: u16,
-    pub genesis_map: Vec<u8>,
+    pub room_id: Pubkey,
+    pub room_size: u16,
+    pub genesis_room: Vec<u8>,
     pub genesis_position: u16,
 }
 
@@ -24,11 +24,11 @@ pub struct CreateHotel<'info> {
     #[account(
         init,
         payer = payer,
-        space = Room::space(args.map_size as usize),
-        seeds = [MAP_PDA_SEED, hotel.key().as_ref(), args.map_id.as_ref()],
+        space = Room::space(args.room_size as usize),
+        seeds = [ROOM_PDA_SEED, hotel.key().as_ref(), args.room_id.as_ref()],
         bump,
     )]
-    pub map: Account<'info, Room>,
+    pub room: Account<'info, Room>,
     #[account(mut)]
     pub payer: Signer<'info>,
     pub system_program: Program<'info, System>,
@@ -36,21 +36,21 @@ pub struct CreateHotel<'info> {
 
 impl<'info> CreateHotel<'info> {
     pub fn handler(ctx: Context<Self>, args: CreateHotelArgs) -> Result<()> {
-        let CreateHotel { hotel, map, .. } = ctx.accounts;
+        let CreateHotel { hotel, room, .. } = ctx.accounts;
         
         hotel.bump = ctx.bumps.hotel;
         hotel.id = args.hotel_id;
-        hotel.map_size = args.map_size;
+        hotel.room_size = args.room_size;
         hotel.genesis = Position {
-            map: map.key(),
+            room: room.key(),
             cell_index: args.genesis_position
         };
 
-        map.bump = ctx.bumps.map;
-        map.hotel = hotel.key();
-        map.id = args.map_id;
-        map.cells = args.genesis_map.into_iter().map(|tile| Cell { tile, occupant: None }).collect();
-        map.connections = vec![];
+        room.bump = ctx.bumps.room;
+        room.hotel = hotel.key();
+        room.id = args.room_id;
+        room.cells = args.genesis_room.into_iter().map(|tile| Cell { tile, occupant: None }).collect();
+        room.connections = vec![];
 
         Ok(())
     }

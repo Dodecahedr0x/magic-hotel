@@ -4,8 +4,8 @@ use anchor_lang::prelude::*;
 pub enum HotelError {
     #[msg("Invalid destination")]
     InvalidDestination,
-    #[msg("Invalid map")]
-    InvalidMap,
+    #[msg("Invalid room")]
+    InvalidRoom,
     #[msg("Crowded destination")]
     CrowdedDestination,
     #[msg("Player not at source")]
