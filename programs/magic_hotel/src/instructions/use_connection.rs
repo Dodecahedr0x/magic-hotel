@@ -1,7 +1,7 @@
 use crate::{
     constant::*,
     errors::HotelError,
-    state::{Hotel, GameMap, Player, Position},
+    state::{Hotel, Room, Player, Position},
 };
 use anchor_lang::prelude::*;
 
@@ -24,14 +24,14 @@ pub struct UseConnection<'info> {
         bump = source_map.bump,
         has_one = hotel,
     )]
-    pub source_map: Account<'info, GameMap>,
+    pub source_map: Account<'info, Room>,
     #[account(
         mut,
         seeds = [MAP_PDA_SEED, destination_map.hotel.as_ref(), destination_map.id.as_ref()],
         bump = destination_map.bump,
         has_one = hotel,
     )]
-    pub destination_map: Account<'info, GameMap>,
+    pub destination_map: Account<'info, Room>,
     #[account(
         mut,
         seeds = [PLAYER_PDA_SEED, player.hotel.as_ref(), player.id.as_ref()],
@@ -52,7 +52,7 @@ impl<'info> UseConnection<'info> {
             owner,
             ..
         } = ctx.accounts;
-        let (source_position, destination_position) = source_map.connections[args.connection_index as usize].clone();
+        let (source_position, destination_position) = source_map.connections[args.connection_index as usize].clone().tuple();
 
         let Some(position) = &player.position else {
             return err!(HotelError::InvalidMap);

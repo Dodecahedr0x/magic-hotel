@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-use crate::{constant::*, state::{Hotel, GameMap, Position}};
+use crate::{constant::*, state::{Connection, Hotel, Position, Room}};
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
 pub struct CreateConnectionArgs {
@@ -23,12 +23,12 @@ pub struct CreateConnection<'info> {
         seeds = [MAP_PDA_SEED, hotel.key().as_ref(), source_map.id.as_ref()],
         bump,
     )]
-    pub source_map: Account<'info, GameMap>,
+    pub source_map: Account<'info, Room>,
     #[account(
         seeds = [MAP_PDA_SEED, hotel.key().as_ref(), destination_map.id.as_ref()],
         bump,
     )]
-    pub destination_map: Account<'info, GameMap>,
+    pub destination_map: Account<'info, Room>,
 }
 
 impl<'info> CreateConnection<'info> {
@@ -37,7 +37,10 @@ impl<'info> CreateConnection<'info> {
 
         // TODO: Check if the connection is valid
         let source_pk = source_map.key();
-        source_map.connections.push((Position { map: source_pk, cell_index: args.origin_cell_index }, Position { map: destination_map.key(), cell_index: args.destination_cell_index }));
+        source_map.connections.push(Connection {
+            source: Position { map: source_pk, cell_index: args.origin_cell_index },
+            destination: Position { map: destination_map.key(), cell_index: args.destination_cell_index },
+        });
 
         Ok(())
     }

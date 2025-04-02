@@ -1,5 +1,5 @@
 use crate::{
-    constant::*, errors::HotelError, state::{Hotel, GameMap, Player}
+    constant::*, errors::HotelError, state::{Hotel, Room, Player}
 };
 use anchor_lang::prelude::*;
 

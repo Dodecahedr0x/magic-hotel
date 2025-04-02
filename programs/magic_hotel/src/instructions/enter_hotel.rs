@@ -1,5 +1,5 @@
 use crate::{
-    constant::*, errors::HotelError, state::{Hotel, GameMap, Player}
+    constant::*, errors::HotelError, state::{Hotel, Room, Player}
 };
 use anchor_lang::prelude::*;
 
@@ -17,7 +17,7 @@ pub struct EnterHotel<'info> {
         bump = map.bump,
         has_one = hotel,
     )]
-    pub map: Account<'info, GameMap>,
+    pub map: Account<'info, Room>,
     #[account(
         mut,
         seeds = [PLAYER_PDA_SEED, hotel.key().as_ref(), player.id.as_ref()],

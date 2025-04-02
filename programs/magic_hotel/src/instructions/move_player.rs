@@ -1,7 +1,7 @@
 use crate::{
     constant::*,
     errors::HotelError,
-    state::{GameMap, Hotel, Player, Position},
+    state::{Room, Hotel, Player, Position},
 };
 use anchor_lang::prelude::*;
 
@@ -24,7 +24,7 @@ pub struct MovePlayer<'info> {
         bump = map.bump,
         has_one = hotel,
     )]
-    pub map: Account<'info, GameMap>,
+    pub map: Account<'info, Room>,
     #[account(
         mut,
         seeds = [PLAYER_PDA_SEED, player.hotel.as_ref(), player.id.as_ref()],

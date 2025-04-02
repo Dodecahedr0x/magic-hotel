@@ -10,7 +10,8 @@ pub struct Player {
 }
 
 impl Player {
-    pub const SPACE: usize = 8 + 1 + 32 + 32 + 32 + 1 +Position::SPACE;
+    pub const SPACE: usize = 8 + 1 + 32 + 32 + 32 + 1 + Position::SPACE;
+    pub fn space(size: usize) -> usize { 8 + 1 + 32 + 32 + size * size * (2 * Position::SPACE) }
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug)]

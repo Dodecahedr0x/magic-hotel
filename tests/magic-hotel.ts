@@ -135,7 +135,6 @@ describe("ephemeral-orderbook", () => {
       .rpc();
 
     let playerAccount = await program.account.player.fetch(playerPda);
-    console.log(playerAccount);
     assert.equal(playerAccount.position.map.toString(), map1Pda.toString());
     assert.equal(playerAccount.position.cellIndex.toString(), "1");
 
