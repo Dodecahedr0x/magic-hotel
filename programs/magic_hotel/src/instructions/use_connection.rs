@@ -57,7 +57,7 @@ impl<'info> UseConnection<'info> {
         let Some(position) = &player.position else {
             return err!(HotelError::InvalidRoom);
         };
-        if !position.room.eq(&source_room.key()) {
+        if !position.room.eq(&source_room.key()) || source_room.cells[position.cell_index as usize].occupant != Some(player.key()) {
             return err!(HotelError::InvalidRoom);
         }
         if position.cell_index != source_position.cell_index {

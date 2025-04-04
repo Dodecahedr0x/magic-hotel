@@ -48,7 +48,7 @@ impl<'info> MovePlayer<'info> {
         let Some(position) = &player.position else {
             return err!(HotelError::InvalidRoom);
         };
-        if !position.room.eq(&room.key()) {
+        if !position.room.eq(&room.key()) || room.cells[position.cell_index as usize].occupant != Some(player.key()) {
             return err!(HotelError::InvalidRoom);
         }
         if !position.is_adjacent(args.destination_index, hotel.room_size) {
@@ -59,7 +59,7 @@ impl<'info> MovePlayer<'info> {
         }
 
         room.cells[position.cell_index as usize].occupant = None;
-        room.cells[args.destination_index as usize].occupant = Some(player.id);
+        room.cells[args.destination_index as usize].occupant = Some(player.key());
         player.position = Some(Position { room: room.key(), cell_index: args.destination_index });
 
         Ok(())

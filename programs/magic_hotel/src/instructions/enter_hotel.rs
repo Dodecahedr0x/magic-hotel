@@ -38,7 +38,7 @@ impl<'info> EnterHotel<'info> {
         if player.position.is_some() {
             return err!(HotelError::PlayerAlreadyInHotel);
         }
-        room.cells[hotel.genesis.cell_index as usize].occupant = Some(player.id);
+        room.cells[hotel.genesis.cell_index as usize].occupant = Some(player.key());
         player.position = Some(hotel.genesis.clone());
 
         Ok(())
