@@ -1,0 +1,1495 @@
+{
+  "address": "H9NwTUnwjNGKAmST8eVBLnvStnCuMPvkfqT9WTYMXGjE",
+  "metadata": {
+    "name": "magic_hotel",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "create_connection",
+      "discriminator": [
+        107,
+        30,
+        231,
+        166,
+        113,
+        240,
+        77,
+        88
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "hotel",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  116,
+                  101,
+                  108,
+                  58
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "hotel.id",
+                "account": "Hotel"
+              }
+            ]
+          }
+        },
+        {
+          "name": "source_room",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  111,
+                  111,
+                  109,
+                  58
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "hotel"
+              },
+              {
+                "kind": "account",
+                "path": "source_room.id",
+                "account": "Room"
+              }
+            ]
+          }
+        },
+        {
+          "name": "destination_room",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  111,
+                  111,
+                  109,
+                  58
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "hotel"
+              },
+              {
+                "kind": "account",
+                "path": "destination_room.id",
+                "account": "Room"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "CreateConnectionArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "create_hotel",
+      "discriminator": [
+        77,
+        91,
+        26,
+        46,
+        178,
+        253,
+        117,
+        234
+      ],
+      "accounts": [
+        {
+          "name": "hotel",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  116,
+                  101,
+                  108,
+                  58
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "args.hotel_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "room",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  111,
+                  111,
+                  109,
+                  58
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "hotel"
+              },
+              {
+                "kind": "arg",
+                "path": "args.room_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "CreateHotelArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "create_map",
+      "discriminator": [
+        119,
+        8,
+        165,
+        241,
+        187,
+        193,
+        182,
+        112
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "hotel",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  116,
+                  101,
+                  108,
+                  58
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "hotel.id",
+                "account": "Hotel"
+              }
+            ]
+          }
+        },
+        {
+          "name": "room",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  111,
+                  111,
+                  109,
+                  58
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "hotel"
+              },
+              {
+                "kind": "arg",
+                "path": "args.id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "CreateMapArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "create_player",
+      "discriminator": [
+        19,
+        178,
+        189,
+        216,
+        159,
+        134,
+        0,
+        192
+      ],
+      "accounts": [
+        {
+          "name": "hotel",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  116,
+                  101,
+                  108,
+                  58
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "hotel.id",
+                "account": "Hotel"
+              }
+            ]
+          }
+        },
+        {
+          "name": "player",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  108,
+                  97,
+                  121,
+                  101,
+                  114,
+                  58
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "hotel"
+              },
+              {
+                "kind": "arg",
+                "path": "args.player_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "CreatePlayerArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "delegate_player",
+      "discriminator": [
+        235,
+        159,
+        245,
+        102,
+        161,
+        199,
+        254,
+        89
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "signer": true
+        },
+        {
+          "name": "buffer_pda",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  117,
+                  102,
+                  102,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pda"
+              }
+            ]
+          }
+        },
+        {
+          "name": "delegation_record_pda",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pda"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "delegation_program"
+            }
+          }
+        },
+        {
+          "name": "delegation_metadata_pda",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110,
+                  45,
+                  109,
+                  101,
+                  116,
+                  97,
+                  100,
+                  97,
+                  116,
+                  97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pda"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "delegation_program"
+            }
+          }
+        },
+        {
+          "name": "pda",
+          "writable": true
+        },
+        {
+          "name": "owner_program",
+          "address": "H9NwTUnwjNGKAmST8eVBLnvStnCuMPvkfqT9WTYMXGjE"
+        },
+        {
+          "name": "delegation_program",
+          "address": "DELeGGvXpWV2fqJUhqcF5ZSYMS4JTLjteaAMARRSaeSh"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "DelegatePlayerArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "delegate_room",
+      "discriminator": [
+        39,
+        6,
+        122,
+        70,
+        65,
+        76,
+        166,
+        26
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "signer": true
+        },
+        {
+          "name": "buffer_pda",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  117,
+                  102,
+                  102,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pda"
+              }
+            ]
+          }
+        },
+        {
+          "name": "delegation_record_pda",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pda"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "delegation_program"
+            }
+          }
+        },
+        {
+          "name": "delegation_metadata_pda",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110,
+                  45,
+                  109,
+                  101,
+                  116,
+                  97,
+                  100,
+                  97,
+                  116,
+                  97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pda"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "delegation_program"
+            }
+          }
+        },
+        {
+          "name": "pda",
+          "writable": true
+        },
+        {
+          "name": "owner_program",
+          "address": "H9NwTUnwjNGKAmST8eVBLnvStnCuMPvkfqT9WTYMXGjE"
+        },
+        {
+          "name": "delegation_program",
+          "address": "DELeGGvXpWV2fqJUhqcF5ZSYMS4JTLjteaAMARRSaeSh"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "DelegateRoomArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "enter_hotel",
+      "discriminator": [
+        83,
+        194,
+        31,
+        67,
+        22,
+        16,
+        61,
+        111
+      ],
+      "accounts": [
+        {
+          "name": "hotel",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  116,
+                  101,
+                  108,
+                  58
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "hotel.id",
+                "account": "Hotel"
+              }
+            ]
+          },
+          "relations": [
+            "room"
+          ]
+        },
+        {
+          "name": "room",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  111,
+                  111,
+                  109,
+                  58
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "hotel"
+              },
+              {
+                "kind": "account",
+                "path": "room.id",
+                "account": "Room"
+              }
+            ]
+          }
+        },
+        {
+          "name": "player",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  108,
+                  97,
+                  121,
+                  101,
+                  114,
+                  58
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "hotel"
+              },
+              {
+                "kind": "account",
+                "path": "player.id",
+                "account": "Player"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "move_player",
+      "discriminator": [
+        17,
+        58,
+        68,
+        221,
+        186,
+        117,
+        140,
+        231
+      ],
+      "accounts": [
+        {
+          "name": "hotel",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  116,
+                  101,
+                  108,
+                  58
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "hotel.id",
+                "account": "Hotel"
+              }
+            ]
+          },
+          "relations": [
+            "room",
+            "player"
+          ]
+        },
+        {
+          "name": "room",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  111,
+                  111,
+                  109,
+                  58
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "room.hotel",
+                "account": "Room"
+              },
+              {
+                "kind": "account",
+                "path": "room.id",
+                "account": "Room"
+              }
+            ]
+          }
+        },
+        {
+          "name": "player",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  108,
+                  97,
+                  121,
+                  101,
+                  114,
+                  58
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "player.hotel",
+                "account": "Player"
+              },
+              {
+                "kind": "account",
+                "path": "player.id",
+                "account": "Player"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": [
+            "player"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "MovePlayerArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "process_undelegation",
+      "discriminator": [
+        196,
+        28,
+        41,
+        206,
+        48,
+        37,
+        51,
+        167
+      ],
+      "accounts": [
+        {
+          "name": "base_account",
+          "writable": true
+        },
+        {
+          "name": "buffer"
+        },
+        {
+          "name": "payer",
+          "writable": true
+        },
+        {
+          "name": "system_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "account_seeds",
+          "type": {
+            "vec": "bytes"
+          }
+        }
+      ]
+    },
+    {
+      "name": "undelegate_player",
+      "discriminator": [
+        230,
+        242,
+        176,
+        199,
+        120,
+        26,
+        119,
+        243
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "signer": true
+        },
+        {
+          "name": "pda",
+          "writable": true
+        },
+        {
+          "name": "magic_program",
+          "address": "Magic11111111111111111111111111111111111111"
+        },
+        {
+          "name": "magic_context",
+          "writable": true,
+          "address": "MagicContext1111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "undelegate_room",
+      "discriminator": [
+        151,
+        179,
+        196,
+        11,
+        39,
+        232,
+        174,
+        131
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "signer": true
+        },
+        {
+          "name": "pda",
+          "writable": true
+        },
+        {
+          "name": "magic_program",
+          "address": "Magic11111111111111111111111111111111111111"
+        },
+        {
+          "name": "magic_context",
+          "writable": true,
+          "address": "MagicContext1111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "use_connection",
+      "discriminator": [
+        117,
+        120,
+        69,
+        80,
+        49,
+        26,
+        101,
+        9
+      ],
+      "accounts": [
+        {
+          "name": "hotel",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  116,
+                  101,
+                  108,
+                  58
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "hotel.id",
+                "account": "Hotel"
+              }
+            ]
+          },
+          "relations": [
+            "source_room",
+            "destination_room",
+            "player"
+          ]
+        },
+        {
+          "name": "source_room",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  111,
+                  111,
+                  109,
+                  58
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "source_room.hotel",
+                "account": "Room"
+              },
+              {
+                "kind": "account",
+                "path": "source_room.id",
+                "account": "Room"
+              }
+            ]
+          }
+        },
+        {
+          "name": "destination_room",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  111,
+                  111,
+                  109,
+                  58
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "destination_room.hotel",
+                "account": "Room"
+              },
+              {
+                "kind": "account",
+                "path": "destination_room.id",
+                "account": "Room"
+              }
+            ]
+          }
+        },
+        {
+          "name": "player",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  108,
+                  97,
+                  121,
+                  101,
+                  114,
+                  58
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "player.hotel",
+                "account": "Player"
+              },
+              {
+                "kind": "account",
+                "path": "player.id",
+                "account": "Player"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": [
+            "player"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "UseConnectionArgs"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Hotel",
+      "discriminator": [
+        106,
+        159,
+        170,
+        202,
+        103,
+        172,
+        199,
+        81
+      ]
+    },
+    {
+      "name": "Player",
+      "discriminator": [
+        205,
+        222,
+        112,
+        7,
+        165,
+        155,
+        206,
+        218
+      ]
+    },
+    {
+      "name": "Room",
+      "discriminator": [
+        156,
+        199,
+        67,
+        27,
+        222,
+        23,
+        185,
+        94
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidDestination",
+      "msg": "Invalid destination"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidRoom",
+      "msg": "Invalid room"
+    },
+    {
+      "code": 6002,
+      "name": "CrowdedDestination",
+      "msg": "Crowded destination"
+    },
+    {
+      "code": 6003,
+      "name": "PlayerNotAtSource",
+      "msg": "Player not at source"
+    },
+    {
+      "code": 6004,
+      "name": "InvalidOwner",
+      "msg": "Invalid owner"
+    },
+    {
+      "code": 6005,
+      "name": "PlayerAlreadyInHotel",
+      "msg": "Player already in hotel"
+    }
+  ],
+  "types": [
+    {
+      "name": "Cell",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "tile",
+            "type": "u8"
+          },
+          {
+            "name": "occupant",
+            "type": {
+              "option": "pubkey"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Connection",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "source",
+            "type": {
+              "defined": {
+                "name": "Position"
+              }
+            }
+          },
+          {
+            "name": "destination",
+            "type": {
+              "defined": {
+                "name": "Position"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "CreateConnectionArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "origin_cell_index",
+            "type": "u16"
+          },
+          {
+            "name": "destination_cell_index",
+            "type": "u16"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CreateHotelArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "hotel_id",
+            "type": "pubkey"
+          },
+          {
+            "name": "room_id",
+            "type": "pubkey"
+          },
+          {
+            "name": "room_size",
+            "type": "u16"
+          },
+          {
+            "name": "genesis_room",
+            "type": "bytes"
+          },
+          {
+            "name": "genesis_position",
+            "type": "u16"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CreateMapArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "id",
+            "type": "pubkey"
+          },
+          {
+            "name": "cells",
+            "type": "bytes"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CreatePlayerArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "player_id",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "DelegatePlayerArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "hotel",
+            "type": "pubkey"
+          },
+          {
+            "name": "player_id",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "DelegateRoomArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "hotel",
+            "type": "pubkey"
+          },
+          {
+            "name": "room_id",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Hotel",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "id",
+            "type": "pubkey"
+          },
+          {
+            "name": "room_size",
+            "type": "u16"
+          },
+          {
+            "name": "genesis",
+            "type": {
+              "defined": {
+                "name": "Position"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "MovePlayerArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "destination_index",
+            "type": "u16"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Player",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "id",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "hotel",
+            "type": "pubkey"
+          },
+          {
+            "name": "position",
+            "type": {
+              "option": {
+                "defined": {
+                  "name": "Position"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Position",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "room",
+            "type": "pubkey"
+          },
+          {
+            "name": "cell_index",
+            "type": "u16"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Room",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "hotel",
+            "type": "pubkey"
+          },
+          {
+            "name": "id",
+            "type": "pubkey"
+          },
+          {
+            "name": "cells",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "Cell"
+                }
+              }
+            }
+          },
+          {
+            "name": "connections",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "Connection"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "UseConnectionArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "connection_index",
+            "type": "u16"
+          }
+        ]
+      }
+    }
+  ],
+  "constants": [
+    {
+      "name": "HOTEL_PDA_SEED",
+      "type": "bytes",
+      "value": "[104, 111, 116, 101, 108, 58]"
+    },
+    {
+      "name": "PLAYER_PDA_SEED",
+      "type": "bytes",
+      "value": "[112, 108, 97, 121, 101, 114, 58]"
+    },
+    {
+      "name": "ROOM_PDA_SEED",
+      "type": "bytes",
+      "value": "[114, 111, 111, 109, 58]"
+    }
+  ]
+}

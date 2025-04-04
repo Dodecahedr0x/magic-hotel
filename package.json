@@ -1,6 +1,11 @@
 {
   "license": "ISC",
+  "private": true,
+  "workspaces": [
+    "magic-hotel-app"
+  ],
   "scripts": {
+    "app:dev": "yarn workspace magic-hotel-app dev",
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
     "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check"
   },
