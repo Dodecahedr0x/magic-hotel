@@ -1,17 +1,17 @@
 import { useCallback, useMemo } from "react";
-import { PublicKey, Keypair, Transaction } from "@solana/web3.js";
+import { PublicKey, Keypair } from "@solana/web3.js";
 import { Program } from "@coral-xyz/anchor";
 import { MagicHotel } from "@/lib/magic_hotel";
 import MagicHotelIdl from "@/lib/magic_hotel.json";
 import { useProvider } from "./use-provider";
 import { PLAYER_PDA_SEED } from "@/lib/constants";
 import { useHotelStore } from "@/store";
-import { Player } from "@/lib/types";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { Player, Room } from "@/lib/types";
+import { useMagicBlockEngine } from "./use-magic-block-engine";
 
 export function useMagicHotelProgram() {
   const { provider, ephemeralProvider } = useProvider();
-  const wallet = useWallet();
+  const engine = useMagicBlockEngine();
   const program = useMemo(() => {
     if (provider) {
       return new Program<MagicHotel>(MagicHotelIdl as any, provider);
@@ -28,112 +28,126 @@ export function useMagicHotelProgram() {
     if (!hotel) {
       throw new Error("Hotel not found");
     }
-    if (!wallet || !wallet.signTransaction) {
-      throw new Error("Wallet not found");
+    if (!engine) {
+      throw new Error("Engine not found");
+    }
+    if (!program) {
+      throw new Error("Program not found");
     }
 
-    const { tx: rawTx } = await fetch("/api/tx/create-player", {
-      method: "POST",
-      body: JSON.stringify({
-        hotel: hotel.publicKey,
-        owner: wallet.publicKey,
-        ephemeral: false,
-      }),
-    }).then((res) => res.json());
+    const hotelPk = new PublicKey(hotel.publicKey);
+    const playerId = Keypair.generate().publicKey;
+    const player = PublicKey.findProgramAddressSync(
+      [PLAYER_PDA_SEED, hotelPk.toBuffer(), playerId.toBuffer()],
+      program.programId
+    )[0];
 
-    const tx = Transaction.from(Buffer.from(rawTx, "base64"));
-    const signedTx = await wallet.signTransaction(tx);
-
-    await fetch("/api/tx/send", {
-      method: "POST",
-      body: JSON.stringify({
-        txs: [{ tx: signedTx.serialize(), ephemeral: false }],
-      }),
+    console.log("player", {
+      hotel: hotelPk,
+      player,
+      user: engine.getSessionPayer(),
     });
-  }, [program, hotel]);
+    const tx = await program.methods
+      .createPlayer({ playerId })
+      .accountsPartial({
+        hotel: hotelPk,
+        player,
+        user: engine.getSessionPayer(),
+      })
+      .transaction();
+    tx.recentBlockhash = (
+      await program.provider.connection.getLatestBlockhash()
+    ).blockhash;
+    tx.feePayer = engine.getSessionPayer()!;
+
+    return engine.processSessionChainTransaction("create-player", tx);
+  }, [program, hotel, engine]);
 
   const enterHotel = useCallback(
     async (player: Player) => {
       if (!hotel) {
         throw new Error("Hotel not found");
       }
-      if (!wallet || !wallet.signAllTransactions) {
-        throw new Error("Wallet not found");
+      if (!engine) {
+        throw new Error("Engine not found");
+      }
+      if (!ephemeralProgram || !program) {
+        throw new Error("Program not found");
       }
 
-      const { txs: rawTxs, error }: { txs: string[]; error?: any } =
-        await fetch("/api/tx/enter-hotel", {
-          method: "POST",
-          body: JSON.stringify({
-            hotel: hotel.publicKey.toString(),
-            owner: wallet.publicKey?.toString(),
-            playerId: player.account.id.toString(),
-          }),
-        }).then((res) => res.json());
+      const hotelPk = new PublicKey(hotel.publicKey);
 
-      if (error) {
-        console.error("Error entering hotel", error);
-        throw Error(error);
-      }
+      const delegateTx = await program.methods
+        .delegatePlayer({
+          hotel: hotelPk,
+          playerId: new PublicKey(player.account.id),
+        })
+        .accountsPartial({
+          pda: new PublicKey(player.publicKey),
+          payer: engine.getSessionPayer()!,
+        })
+        .transaction();
+      delegateTx.recentBlockhash = (
+        await program.provider.connection.getLatestBlockhash()
+      ).blockhash;
+      delegateTx.feePayer = engine.getSessionPayer()!;
 
-      const [signedDelegateTx, signedEnterTx] =
-        await wallet.signAllTransactions(
-          rawTxs.map((tx) => Transaction.from(Buffer.from(tx, "base64")))
-        );
+      const enterTx = await ephemeralProgram.methods
+        .enterHotel()
+        .accountsPartial({
+          hotel: hotelPk,
+          room: hotel.account.genesis.room,
+          player: new PublicKey(player.publicKey),
+          user: engine.getSessionPayer()!,
+        })
+        .transaction();
+      enterTx.recentBlockhash = (
+        await ephemeralProgram.provider.connection.getLatestBlockhash()
+      ).blockhash;
+      enterTx.feePayer = engine.getSessionPayer()!;
 
-      await fetch("/api/tx/send", {
-        method: "POST",
-        body: JSON.stringify({
-          txs: [
-            { tx: signedDelegateTx.serialize(), ephemeral: false },
-            { tx: signedEnterTx.serialize(), ephemeral: true },
-          ],
-        }),
-      });
+      await engine.processSessionChainTransaction("delegate", delegateTx);
+      await engine.processSessionEphemTransaction("enter-hotel", enterTx);
     },
-    [program, ephemeralProgram, hotel]
+    [hotel, engine, ephemeralProgram, program]
   );
 
   const movePlayer = useCallback(
-    async (player: Player, destination: number) => {
+    async (player: Player, room: Room, destination: number) => {
       if (!hotel) {
         throw new Error("Hotel not found");
       }
-      if (!wallet || !wallet.signTransaction) {
-        throw new Error("Wallet not found");
+      if (!engine) {
+        throw new Error("Engine not found");
+      }
+      if (!ephemeralProgram) {
+        throw new Error("Program not found");
       }
 
-      const { tx: rawTx, error }: { tx: string; error?: any } = await fetch(
-        "/api/tx/move-player",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            hotel: hotel.publicKey.toString(),
-            owner: wallet.publicKey?.toString(),
-            player: player.publicKey.toString(),
-            room: player.account.position?.room.toString(),
-            destination,
-          }),
-        }
-      ).then((res) => res.json());
+      const ownerPk = new PublicKey(engine.getSessionPayer()!);
+      const hotelPk = new PublicKey(hotel.publicKey);
+      const playerPk = new PublicKey(player.publicKey);
+      const roomPk = new PublicKey(room.publicKey);
 
-      if (error) {
-        console.error("Error moving", error);
-        throw Error(error);
-      }
+      const tx = await ephemeralProgram.methods
+        .movePlayer({
+          destinationIndex: destination,
+        })
+        .accountsPartial({
+          hotel: hotelPk,
+          room: roomPk,
+          player: playerPk,
+          owner: ownerPk,
+        })
+        .transaction();
+      tx.recentBlockhash = (
+        await ephemeralProgram.provider.connection.getLatestBlockhash()
+      ).blockhash;
+      tx.feePayer = ownerPk;
 
-      const signedTx = await wallet.signTransaction(
-        Transaction.from(Buffer.from(rawTx, "base64"))
-      );
-
-      await fetch("/api/tx/send", {
-        method: "POST",
-        body: JSON.stringify({
-          txs: [{ tx: signedTx.serialize(), ephemeral: true }],
-        }),
-      });
+      await engine.processSessionEphemTransaction("move", tx);
     },
-    [program, ephemeralProgram, hotel]
+    [hotel, engine, ephemeralProgram]
   );
 
   return { createPlayer, enterHotel, movePlayer, program };

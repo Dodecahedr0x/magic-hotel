@@ -1,6 +1,7 @@
 import MagicHotelIdl from "./magic_hotel.json";
 
-export const RPC_URL = `https://devnet.helius-rpc.com/?api-key=${process.env.HELIUS_API_KEY}`;
+export const RPC_URL = `https://devnet.helius-rpc.com/?api-key=${process.env.NEXT_PUBLIC_HELIUS_API_KEY}`;
+export const RPC_URL_WSS = `wss://devnet.helius-rpc.com/?api-key=${process.env.NEXT_PUBLIC_HELIUS_API_KEY}`;
 export const MAGICBLOCK_RPC = `https://devnet.magicblock.app/`;
 
 function bytesStringToBuffer(str: string) {

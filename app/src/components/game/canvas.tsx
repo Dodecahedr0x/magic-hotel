@@ -132,7 +132,7 @@ export default function GameCanvas({
         characterRef.current &&
         context
       ) {
-        await movePlayer(currentPlayer, destination);
+        await movePlayer(currentPlayer, room, destination);
         await fetchCurrentPlayer(currentPlayer.publicKey, true);
         await fetchRoom(currentPlayer.account.position.room);
         drawRoom(context, tilesetRef.current, characterRef.current);
@@ -144,7 +144,15 @@ export default function GameCanvas({
     return () => {
       canvas.removeEventListener("keydown", handleKeyDown);
     };
-  }, [room, canvasRef, drawRoom, currentPlayer]);
+  }, [
+    room,
+    canvasRef,
+    drawRoom,
+    currentPlayer,
+    movePlayer,
+    fetchCurrentPlayer,
+    fetchRoom,
+  ]);
 
   console.log(room, players);
 

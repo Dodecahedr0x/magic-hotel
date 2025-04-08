@@ -53,7 +53,9 @@ export const createApiSlice = (
     });
     try {
       const res = await fetch(
-        `/api/players?hotel=${get().currentHotel?.publicKey}&owner=${owner}`
+        `/api/players?hotel=${
+          get().currentHotel?.publicKey
+        }&owner=${owner.toString()}`
       );
       const result = await res.json();
       set({ ownedPlayers: { data: result, loading: false, error: null } });

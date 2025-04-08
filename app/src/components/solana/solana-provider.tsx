@@ -1,29 +1,39 @@
-'use client'
+"use client";
 
-import { RPC_URL } from '@/lib/constants'
-import { WalletError } from '@solana/wallet-adapter-base'
-import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react'
-import { WalletModalProvider } from '@solana/wallet-adapter-react-ui'
-import dynamic from 'next/dynamic'
-import { ReactNode, useCallback, useMemo } from 'react'
+import { RPC_URL } from "@/lib/constants";
+import { WalletError } from "@solana/wallet-adapter-base";
+import {
+  ConnectionProvider,
+  WalletProvider,
+} from "@solana/wallet-adapter-react";
+import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
+import dynamic from "next/dynamic";
+import { ReactNode, useCallback } from "react";
+import { MagicBlockEngineProvider } from "./magic-block-provider";
 
-require('@solana/wallet-adapter-react-ui/styles.css')
+require("@solana/wallet-adapter-react-ui/styles.css");
 
-export const WalletButton = dynamic(async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton, {
-  ssr: false,
-})
+export const WalletButton = dynamic(
+  async () =>
+    (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
+  {
+    ssr: false,
+  }
+);
 
 export function SolanaProvider({ children }: { children: ReactNode }) {
-  const endpoint = useMemo(() => RPC_URL, [RPC_URL])
+  const endpoint = RPC_URL;
   const onError = useCallback((error: WalletError) => {
-    console.error(error)
-  }, [])
+    console.error(error);
+  }, []);
 
   return (
     <ConnectionProvider endpoint={endpoint}>
       <WalletProvider wallets={[]} onError={onError} autoConnect={true}>
-        <WalletModalProvider>{children}</WalletModalProvider>
+        <WalletModalProvider>
+          <MagicBlockEngineProvider>{children}</MagicBlockEngineProvider>
+        </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
-  )
+  );
 }
